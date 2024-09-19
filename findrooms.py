@@ -36,17 +36,6 @@ selector = WebDriverWait(driver, 10).until(
 )
 selector.click() #Click on School/Unit
 
-# #Click on Dropdown
-# dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
-# dropdown.click()#Click on searchbar Dropdown
-    
-
-
-# option = WebDriverWait(driver, 10).until(
-#     EC.element_to_be_clickable((By.XPATH, f'//*[@id="dijit_form_FilteringSelect_1_popup0"]'))
-# )
-# option.click()
-
 
 
 
@@ -71,6 +60,19 @@ for i in range(26):
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.ID, "courseDataParent"))
         )
+
+        #Initialize html_content with current html
+        html_content = driver.page_source
+
+        #Initialize BeautifulSoup scraper
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        meeting_times_divs = soup.find_all('div', class_='sectionMeetingTimesDiv')
+        print(meeting_times_divs)
+
+
+
+
 
         #className = sectionMeetingTimesDiv
         #Room: meetingTimeBuildingAndRoom
