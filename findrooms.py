@@ -9,8 +9,11 @@ import re #regular expression library to parse our data
 
 driver = webdriver.Chrome() 
 driver.get('https://classes.rutgers.edu/soc/#home');
-time.sleep(2)
 
+
+WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.XPATH, '//*[@id="FALL_SPRING_1_TEXT"]'))
+)
 
 #Complete form to access all classes in New Brunswick
 selector = driver.find_element("xpath", '//*[@id="FALL_SPRING_1_TEXT"]')
@@ -25,12 +28,7 @@ selector = driver.find_element('xpath', '//*[@id="continueButton"]')
 selector.click()
 #Form Submitted
 
-'''
-elem = WebDriverWait(driver, 30).until(
-EC.presence_of_element_located((By.ID, "Element_to_be_found")) #This is a dummy element
-)
-finally:
-'''
+
 # WebDriverWait(driver, 7, poll_frequency=5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="footer"]/p[1]"]')), 'Timed out waiting for simple alert to appear')
 time.sleep(1.5)
 selector = WebDriverWait(driver, 10).until(
@@ -60,13 +58,26 @@ for i in range(26):
     dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
     dropdown.click()#Click on searchbar Dropdown
     
-    #Click each proceeding option
+    
     option = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, f"dijit_form_FilteringSelect_1_popup{i}"))
     )
     try:
+        #Click on each School
         option.click()
-        time.sleep(0.25)
+
+        #Wait until page is loaded before accessing data
+
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "courseDataParent"))
+        )
+
+        #className = sectionMeetingTimesDiv
+        #Room: meetingTimeBuildingAndRoom
+        #Time: meetingTimeHours
+        #Day: meetingTimeDay
+
+
     except Exception as e:
         print(f"Error interacting with div: {e}")
 
