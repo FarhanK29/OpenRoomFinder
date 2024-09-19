@@ -38,41 +38,37 @@ selector = WebDriverWait(driver, 10).until(
 )
 selector.click() #Click on School/Unit
 
-#Click on Dropdown
-dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
-dropdown.click()#Click on searchbar Dropdown
+# #Click on Dropdown
+# dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
+# dropdown.click()#Click on searchbar Dropdown
     
-#Click each proceeding option
+
+
 # option = WebDriverWait(driver, 10).until(
-#     EC.presence_of_all_elements_located((By.ID, f"dijit_form_FilteringSelect_1_popup1"))
+#     EC.element_to_be_clickable((By.XPATH, f'//*[@id="dijit_form_FilteringSelect_1_popup0"]'))
 # )
 # option.click()
 
-option = WebDriverWait(driver, 10).until(
-    EC.presence_of_all_elements_located((By.XPATH, f'//*[@id="dijit_form_FilteringSelect_1_popup0"]'))
-)
-option.click()
 
 
 
 
-
-# i = 0
-# #Iterate through each school/unit
-# for i in range(26):
-#     #Click on Dropdown
-#     dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
-#     dropdown.click()#Click on searchbar Dropdown
+i = 0
+#Iterate through each school/unit
+for i in range(26):
+    #Click on Dropdown
+    dropdown = driver.find_element('xpath', '//*[@id="widget_dijit_form_FilteringSelect_1"]/div[1]/input')
+    dropdown.click()#Click on searchbar Dropdown
     
-#     #Click each proceeding option
-#     option = WebDriverWait(driver, 10).until(
-#         EC.presence_of_all_elements_located((By.ID, f"dijit_form_FilteringSelect_1_popup{i}"))
-#     )
-#     try:
-#         option.click()
-#         time.sleep(0.25)
-#     except Exception as e:
-#         print(f"Error interacting with div: {e}")
+    #Click each proceeding option
+    option = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, f"dijit_form_FilteringSelect_1_popup{i}"))
+    )
+    try:
+        option.click()
+        time.sleep(0.25)
+    except Exception as e:
+        print(f"Error interacting with div: {e}")
 
  
 
