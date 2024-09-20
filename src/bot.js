@@ -63,7 +63,17 @@ const client = new Client({
   ]
 })
 
-console.log(process.env.DISCORD_TOKEN)
-// client.login(
-//   process.env.DISCORD_TOKEN
-// )
+client.on('ready', (c) =>{
+  console.log(`${c.user.tag} is online`)
+})
+
+client.on('messageCreate', (message) =>{
+  if (message.content === 'fetch'){
+    console.log(getScheduleForRoomAndDay('ARC-103', 'Monday'))
+    message.reply((getScheduleForRoomAndDay('ARC-103', 'Monday').toString()))
+  }
+})
+
+client.login(
+  process.env.DISCORD_TOKEN
+);
