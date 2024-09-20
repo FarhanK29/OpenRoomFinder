@@ -1,6 +1,9 @@
 //to read from .txt file
 const fs = require('fs');
 
+//to read info from .env
+require('dotenv').config()
+
 //discord imports
 const {Client, IntentsBitField} = require('discord.js')
 
@@ -53,6 +56,14 @@ console.log("Monday, ARC_103", getScheduleForRoomAndDay('ARC-103', 'Monday'))
 
 const client = new Client({
   intents: [
-    IntentsBitField.Flags.Guilds
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMembers,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.MessageContent,
   ]
 })
+
+console.log(process.env.DISCORD_TOKEN)
+// client.login(
+//   process.env.DISCORD_TOKEN
+// )
