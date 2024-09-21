@@ -52,11 +52,22 @@ module.exports = {
             option
                 .setName('day')
                 .setDescription("Day of the week that you want to know the schedule for.")
-                .setRequired(true)),
+                .setRequired(true)
+                .addChoices(
+                    { name: 'Monday', value: 'Monday' },
+                    { name: 'Tuedsay', value: 'Tuesday' },
+                    { name: 'Wednesday', value: 'Wednesday' },
+                    { name: 'Thursday', value: 'Thursday' },
+                    { name: 'Friday', value: 'Friday' },
+                    { name: 'Saturday', value: 'Saturday' },
+                    { name: 'Sunday', value: 'Sunday'}
+                )),
+    
     async execute(interaction){
         const room = interaction.options.getString('room')
         const day = interaction.options.getString('day')
-        console.log(getScheduleForRoomAndDay(room, day))
-        await interaction.reply(`${room} is booked on ${day} during the following times: ${getScheduleForRoomAndDay(room, day).toString()}`)
+        const info = getScheduleforRoomAndDay(room,day).toString()
+
+        await interaction.reply(`${room} is booked on ${day} during the following times: ${info}`)
     },
 };
