@@ -66,7 +66,7 @@ module.exports = {
     async execute(interaction){
         const room = interaction.options.getString('room')
         const day = interaction.options.getString('day')
-        const info = getScheduleforRoomAndDay(room,day).toString()
+        const info = getScheduleForRoomAndDay(room,day).toString()
 
         await interaction.reply(`${room} is booked on ${day} during the following times: ${info}`)
     },
