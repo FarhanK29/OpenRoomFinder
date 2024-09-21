@@ -57,6 +57,6 @@ module.exports = {
         const room = interaction.options.getString('room')
         const day = interaction.options.getString('day')
         console.log(getScheduleForRoomAndDay(room, day))
-        await interaction.reply(getScheduleForRoomAndDay(room, day).toString())
+        await interaction.reply(`${room} is booked on ${day} during the following times: ${getScheduleForRoomAndDay(room, day).toString()}`)
     },
 };
