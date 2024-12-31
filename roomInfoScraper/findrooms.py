@@ -81,11 +81,17 @@ for school in range(26):
                 timing = hours[iterator].get_text(strip=True)
                 startTime = timing.split(' - ')[0]
                 endTime = timing.split(' - ')[1]
+
+                #Converting to 24 hour format
                 start_24 = datetime.datetime.strptime(startTime, '%I:%M %p').strftime('%H:%M')
                 end_24 = datetime.datetime.strptime(endTime, '%I:%M %p').strftime('%H:%M')
+
+                #Making array of room, start time, end time, and day
                 roomInfo = [rooms[iterator].get_text(strip=True), start_24, end_24, days[iterator].get_text(strip=True)]
-                # roomInfo = [rooms[iterator].get_text(strip=True), hours[iterator].get_text(strip=True), days[iterator].get_text(strip=True)]
+
                 if roomInfo not in allClasses:
+
+                    #Adding to allClasses array if not already added
                     allClasses.append(roomInfo)
                     print(roomInfo)
 
@@ -114,6 +120,7 @@ time.sleep(1)#Just for visibility, seeing that everything is done before closing
 
 driver.quit()
 
+#Adding all data to database
 connection = sqlite3.connect('class_schedule.db')
 cursor = connection.cursor()
 
