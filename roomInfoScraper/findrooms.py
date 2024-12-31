@@ -7,6 +7,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup 
 #Time for timer at the end before closing
 import time
+#sqlite for storing data in database
+import sqlite3
+#Datetime for converting time to 24 hour format
+import datetime
  
 
 driver = webdriver.Chrome() 
@@ -74,9 +78,16 @@ for school in range(26):
 
         for iterator in range(len(rooms)):
             if(rooms[iterator].get_text(strip=True) != ""):
-                roomInfo = [rooms[iterator].get_text(strip=True), hours[iterator].get_text(strip=True), days[iterator].get_text(strip=True)]
+                timing = hours[iterator].get_text(strip=True)
+                startTime = timing.split(' - ')[0]
+                endTime = timing.split(' - ')[1]
+                start_24 = datetime.datetime.strptime(startTime, '%I:%M %p').strftime('%H:%M')
+                end_24 = datetime.datetime.strptime(endTime, '%I:%M %p').strftime('%H:%M')
+                roomInfo = [rooms[iterator].get_text(strip=True), start_24, end_24, days[iterator].get_text(strip=True)]
+                # roomInfo = [rooms[iterator].get_text(strip=True), hours[iterator].get_text(strip=True), days[iterator].get_text(strip=True)]
                 if roomInfo not in allClasses:
                     allClasses.append(roomInfo)
+                    print(roomInfo)
 
 
       
@@ -103,6 +114,25 @@ time.sleep(1)#Just for visibility, seeing that everything is done before closing
 
 driver.quit()
 
-with open('roomInfoScraper/room_schedule.txt', 'w') as file:
-    for item in allClasses:
-        file.write(str(item) + '\n')  # Add a newline after each item
+connection = sqlite3.connect('class_schedule.db')
+cursor = connection.cursor()
+
+cursor.execute('DROP TABLE IF EXISTS Schedule')
+
+cursor.execute("""
+CREATE TABLE Schedule (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    day TEXT NOT NULL
+)
+""")
+
+for entry in allClasses:
+    cursor.execute("INSERT INTO Schedule (room, start_time, end_time, day) VALUES (?, ?, ?, ?)", entry)
+
+connection.commit()
+connection.close()
+
+print("All data added to database")
