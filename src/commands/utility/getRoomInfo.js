@@ -1,42 +1,33 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require('node:fs');
+const sqlite3 = require('sqlite3').verbose();
 
-// convert textFile into array 
-const data = fs.readFileSync('./roomInfoScraper/room_schedule.txt', 'utf-8').split('\n');
+const db = new sqlite3.Database('class_schedule.db');
 
-//Initialize roomData dictionary to hold all roomData
-const roomData = {};
 
-for (i = 0; i < data.length; i++){
-
-    // data[i] = data[i].replace('[', '').trim();
-    // data[i] = data[i].replace(']', '').trim()
-    data[i] = data[i].replace('[', '').replace(']', '').trim();
-
-    
-    const [room, time, day] = data[i].split(',').map(item => item.trim().replace(/'/g, ''));
-
-    if(!roomData[room]){
-        roomData[room] = []
-    }
-    roomData[room].push({day, time})
-
-}
 
 function getScheduleForRoomAndDay(room, day) {
-    // Check if the room exists in the dictionary
-    if (roomData[room]) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT start_time, end_time 
+            FROM Schedule 
+            WHERE room = ? AND day = ? 
+            ORDER BY start_time;
+        `;
 
-      // Filter the time objects for the specified day
-      const timesForDay = roomData[room]
-      .filter(schedule => schedule.day === day)
-      .map(schedule => schedule.time);
-    
-      return timesForDay;
-    } else {
-      // Return an empty array if the room does not exist
-      return "No Room Data"
-    }
+        db.all(query, [room, day], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (rows.length === 0) {
+                    resolve(`No schedule found for room ${room} on ${day}.`);
+                } else {
+                    const times = rows.map(row => `${row.start_time} - ${row.end_time}`);
+                    resolve(times.join(', '));
+                }
+            }
+        });
+    });
 }
 
 module.exports = {
@@ -62,12 +53,18 @@ module.exports = {
                     { name: 'Saturday', value: 'Saturday' },
                     { name: 'Sunday', value: 'Sunday'}
                 )),
-    
-    async execute(interaction){
-        const room = interaction.options.getString('room')
-        const day = interaction.options.getString('day')
-        const info = getScheduleForRoomAndDay(room,day).toString()
 
-        await interaction.reply(`${room} is booked on ${day} during the following times: ${info}`)
-    },
+
+    async execute(interaction) {
+        const room = interaction.options.getString('room');
+        const day = interaction.options.getString('day');
+
+        try {
+            const info = await getScheduleForRoomAndDay(room, day);
+            await interaction.reply(`${room} is booked on ${day} during the following times: ${info}`);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply('An error occurred while retrieving the schedule.');
+        }
+    }
 };
